@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "whatsapp": {
+      "command": "npx",
+      "args": ["tsx", "./src/index.ts"],
+      "env": {
+        "WA_ALLOW_FROM": "",
+        "WA_VERBOSE": "1"
+      }
+    }
+  }
+}

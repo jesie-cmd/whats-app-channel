@@ -1,0 +1,25 @@
+node_modules/
+dist/
+*.js
+*.d.ts
+!src/types.d.ts
+*.map
+
+# Auth credentials
+auth/
+
+# Logs
+debug.log
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.*
