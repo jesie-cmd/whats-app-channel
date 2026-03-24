@@ -83,16 +83,17 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
    After this, anyone you've allowed can message your WhatsApp number
    and Claude will receive it and reply."
 
-   Tell me to open the whatsapp-channel folder in Claude Code and start
-   with this command:
+   Now open a terminal and run these commands directly:
 
-   - First, open the folder:
-     Mac: Open VS Code or your editor, then open the folder ~/whatsapp-channel
-     Windows: Open VS Code or your editor, then open the folder
-     C:\Users\[my username]\whatsapp-channel
+   Mac/Linux:
+     cd ~/whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
 
-   - Then start Claude Code with:
-     claude --dangerously-load-development-channels server:whatsapp
+   Windows:
+     cd %USERPROFILE%\whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
+
+   Tell me how to open a terminal if I don't know:
+   - Mac: Press Cmd+Space, type "Terminal", press Enter
+   - Windows: Press the Windows key, type "Terminal" or "Command Prompt", press Enter
 
    NOTE: The flag "--dangerously-load-development-channels" sounds scary
    but it's normal — it just means this is a custom channel not yet in
@@ -106,8 +107,10 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
    "You're all set! Here's what you need to know:
 
    HOW TO START:
-   - Open the whatsapp-channel folder in your editor
-   - Run: claude --dangerously-load-development-channels server:whatsapp
+   - Open a terminal (Mac: Cmd+Space → Terminal / Windows: Start → Terminal)
+   - Run this command:
+     Mac/Linux: cd ~/whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
+     Windows: cd %USERPROFILE%\whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
    - That's it! Claude is now listening on your WhatsApp.
 
    GOOD NEWS:
