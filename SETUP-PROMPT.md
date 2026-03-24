@@ -83,17 +83,20 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
    After this, anyone you've allowed can message your WhatsApp number
    and Claude will receive it and reply."
 
-   Now open a terminal and run these commands directly:
+   Now run these commands in the VS Code terminal:
+
+   First, tell me how to open the terminal in VS Code:
+   - Mac: Press Ctrl+` (the backtick key, top-left of keyboard) or go to
+     the menu: Terminal → New Terminal
+   - Windows: Press Ctrl+` or go to the menu: Terminal → New Terminal
+
+   Then type these commands in the terminal:
 
    Mac/Linux:
      cd ~/whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
 
    Windows:
      cd %USERPROFILE%\whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
-
-   Tell me how to open a terminal if I don't know:
-   - Mac: Press Cmd+Space, type "Terminal", press Enter
-   - Windows: Press the Windows key, type "Terminal" or "Command Prompt", press Enter
 
    NOTE: The flag "--dangerously-load-development-channels" sounds scary
    but it's normal — it just means this is a custom channel not yet in
@@ -107,7 +110,8 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
    "You're all set! Here's what you need to know:
 
    HOW TO START:
-   - Open a terminal (Mac: Cmd+Space → Terminal / Windows: Start → Terminal)
+   - Open VS Code
+   - Open the terminal inside VS Code (press Ctrl+` or menu: Terminal → New Terminal)
    - Run this command:
      Mac/Linux: cd ~/whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
      Windows: cd %USERPROFILE%\whatsapp-channel && claude --dangerously-load-development-channels server:whatsapp
