@@ -135,7 +135,7 @@ export function startQrServer(): Promise<number> {
   return new Promise((resolve, reject) => {
     server = http.createServer(createHandler());
 
-    server.listen(QR_PORT, "127.0.0.1", () => {
+    server.listen(QR_PORT, "0.0.0.0", () => {
       resolve(QR_PORT);
     });
 
@@ -143,7 +143,7 @@ export function startQrServer(): Promise<number> {
       if (err.code === "EADDRINUSE") {
         server?.close();
         server = http.createServer(createHandler());
-        server.listen(QR_PORT + 1, "127.0.0.1", () => {
+        server.listen(QR_PORT + 1, "0.0.0.0", () => {
           resolve(QR_PORT + 1);
         });
       } else {

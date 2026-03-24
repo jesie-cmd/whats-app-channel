@@ -257,16 +257,19 @@ async function main() {
   let qrPort: number | null = null;
   try {
     qrPort = await startQrServer();
-    console.error(`[whatsapp-channel] QR login page: http://localhost:${qrPort}`);
+    console.error(`[whatsapp-channel] QR login page: http://127.0.0.1:${qrPort}`);
   } catch (err) {
     console.error("[whatsapp-channel] QR server failed to start:", String(err));
   }
 
   // Auto-open browser and notify Claude if login is needed
   if (needsQr && qrPort) {
-    // Open browser automatically
-    const url = `http://localhost:${qrPort}`;
-    exec(`open "${url}"`, (err) => {
+    // Open browser automatically (cross-platform)
+    const url = `http://127.0.0.1:${qrPort}`;
+    const openCmd = process.platform === "win32" ? `start "" "${url}"`
+      : process.platform === "darwin" ? `open "${url}"`
+      : `xdg-open "${url}"`;
+    exec(openCmd, (err) => {
       if (err) console.error("[whatsapp-channel] Failed to open browser:", String(err));
     });
 
@@ -288,7 +291,7 @@ async function main() {
       onMessage: handleInboundMessage,
       onQr: (qr) => {
         updateQr(qr).catch(() => {});
-        console.error("[whatsapp-channel] New QR code generated. Scan at http://localhost:" + (qrPort ?? 8787));
+        console.error("[whatsapp-channel] New QR code generated. Scan at http://127.0.0.1:" + (qrPort ?? 8787));
       },
       onConnected: () => {
         markConnected();

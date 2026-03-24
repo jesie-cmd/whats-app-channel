@@ -38,7 +38,7 @@ This channel bridges WhatsApp into a Claude Code session using:
 | Feature | Description |
 |---------|-------------|
 | Two-way messaging | Receive WhatsApp messages, Claude replies back |
-| QR code login | Browser-based QR page at `http://localhost:8787` |
+| QR code login | Browser-based QR page at `http://127.0.0.1:8787` |
 | Permission relay | Approve/deny Claude's tool use from WhatsApp |
 | Sender allowlist | Restrict who can message your Claude session |
 | Group chat | Group messages include subject and participant info |
@@ -426,7 +426,7 @@ export async function logout(authDir: string = DEFAULT_AUTH_DIR): Promise<boolea
 
 **File: `src/qr-server.ts`**
 
-Since Claude Code spawns the MCP server as a subprocess, stderr goes to a debug log file — not your terminal. This file serves a styled QR code page at `http://localhost:8787` so you can scan it in your browser.
+Since Claude Code spawns the MCP server as a subprocess, stderr goes to a debug log file — not your terminal. This file serves a styled QR code page at `http://127.0.0.1:8787` so you can scan it in your browser.
 
 ### What it does:
 
@@ -440,7 +440,7 @@ Since Claude Code spawns the MCP server as a subprocess, stderr goes to a debug 
 ```typescript
 /**
  * Local HTTP server that displays the QR code for WhatsApp linking.
- * Opens at http://localhost:8787 — accessible in your browser.
+ * Opens at http://127.0.0.1:8787 — accessible in your browser.
  * Automatically closes once WhatsApp connects.
  */
 import http from "node:http";
@@ -1273,7 +1273,7 @@ async function main() {
   try {
     qrPort = await startQrServer();
     console.error(
-      `[whatsapp-channel] QR login page: http://localhost:${qrPort}`,
+      `[whatsapp-channel] QR login page: http://127.0.0.1:${qrPort}`,
     );
   } catch (err) {
     console.error("[whatsapp-channel] QR server failed:", String(err));
@@ -1284,7 +1284,7 @@ async function main() {
     await mcp.notification({
       method: "notifications/claude/channel",
       params: {
-        content: `WhatsApp needs to be linked. Open http://localhost:${qrPort} in your browser to scan the QR code with your phone (WhatsApp > Settings > Linked Devices > Link a Device).`,
+        content: `WhatsApp needs to be linked. Open http://127.0.0.1:${qrPort} in your browser to scan the QR code with your phone (WhatsApp > Settings > Linked Devices > Link a Device).`,
         meta: { type: "system", action: "qr_login_required" },
       },
     });
@@ -1300,7 +1300,7 @@ async function main() {
       onQr: (qr) => {
         updateQr(qr).catch(() => {});
         console.error(
-          "[whatsapp-channel] New QR code generated. Scan at http://localhost:" +
+          "[whatsapp-channel] New QR code generated. Scan at http://127.0.0.1:" +
             (qrPort ?? 8787),
         );
       },
@@ -1442,7 +1442,7 @@ npm install
 # 2. Start Claude Code with the channel
 claude --dangerously-load-development-channels server:whatsapp
 
-# 3. Open http://localhost:8787 in your browser
+# 3. Open http://127.0.0.1:8787 in your browser
 
 # 4. Scan the QR code with WhatsApp > Settings > Linked Devices > Link a Device
 
@@ -1541,12 +1541,12 @@ Both the local terminal and WhatsApp stay live — whichever answer arrives firs
 
 ## 15. Troubleshooting
 
-### QR code not showing at http://localhost:8787
+### QR code not showing at http://127.0.0.1:8787
 
 - Check if the server is running: `lsof -i :8787`
 - If "address in use", kill the old process: `kill $(lsof -t -i :8787)`
 - Check if a different port was assigned (logged to stderr)
-- Try `http://localhost:8788` (fallback port)
+- Try `http://127.0.0.1:8788` (fallback port)
 
 ### Messages not arriving in Claude
 

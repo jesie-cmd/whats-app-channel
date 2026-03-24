@@ -163,7 +163,7 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
    It's safe because it runs entirely on your computer."
 
    If the QR code page does NOT open automatically, tell me to open
-   my browser and go to: http://localhost:8787
+   my browser and go to: http://127.0.0.1:8787
 
 6. After I confirm WhatsApp is connected, tell me:
 
@@ -252,7 +252,7 @@ After changing, restart the channel for changes to take effect.
 | --- | --- |
 | "node is not recognized" | Install Node.js from [nodejs.org](https://nodejs.org) and restart VS Code |
 | "git is not recognized" (Windows) | Follow the Git + PATH fix steps in the requirements section above |
-| QR code not showing | Open your browser and go to `http://localhost:8787` manually |
+| QR code not showing | Open your browser and go to `http://127.0.0.1:8787` manually |
 | QR code page says "Generating..." | Wait 5-10 seconds — Baileys is connecting to WhatsApp servers |
 | Messages not arriving | Check the debug log: `~/.claude/whatsapp-channel/debug.log` |
 | Messages blocked by allowlist | Add the sender's phone number to `WA_ALLOW_FROM` in `.mcp.json` |
