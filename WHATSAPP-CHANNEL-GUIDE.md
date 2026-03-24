@@ -1395,8 +1395,12 @@ This tells Claude Code how to start the WhatsApp channel server.
 {
   "mcpServers": {
     "whatsapp": {
-      "command": "npx",
-      "args": ["tsx", "./src/index.ts"],
+      "command": "node",
+      "args": [
+        "--require", "./node_modules/tsx/dist/preflight.cjs",
+        "--import", "./node_modules/tsx/dist/loader.mjs",
+        "./src/index.ts"
+      ],
       "env": {
         "WA_ALLOW_FROM": "+1234567890, +0987654321",
         "WA_VERBOSE": "1"
@@ -1405,6 +1409,8 @@ This tells Claude Code how to start the WhatsApp channel server.
   }
 }
 ```
+
+> **Why `node` instead of `npx`?** On Windows, `npx` often fails to resolve `tsx` correctly. Using `node` directly with tsx as a loader is more reliable across all platforms.
 
 ### Where to place it:
 
@@ -1417,8 +1423,12 @@ This tells Claude Code how to start the WhatsApp channel server.
 {
   "mcpServers": {
     "whatsapp": {
-      "command": "npx",
-      "args": ["tsx", "/full/path/to/whatsapp-channel/src/index.ts"],
+      "command": "node",
+      "args": [
+        "--require", "/full/path/to/whatsapp-channel/node_modules/tsx/dist/preflight.cjs",
+        "--import", "/full/path/to/whatsapp-channel/node_modules/tsx/dist/loader.mjs",
+        "/full/path/to/whatsapp-channel/src/index.ts"
+      ],
       "env": {
         "WA_ALLOW_FROM": "+1234567890",
         "WA_VERBOSE": "0"

@@ -123,8 +123,33 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
 
    If it fails, help me fix it before continuing.
 
-4. Now let's set up security. Open the file ".mcp.json" inside the
-   whatsapp-channel folder.
+4. IMPORTANT — Fix the .mcp.json for Windows compatibility.
+   The .mcp.json file in the whatsapp-channel folder MUST use "node"
+   directly (not "npx") to work reliably on Windows.
+
+   Overwrite the .mcp.json with this exact content:
+
+   {
+     "mcpServers": {
+       "whatsapp": {
+         "command": "node",
+         "args": [
+           "--require", "./node_modules/tsx/dist/preflight.cjs",
+           "--import", "./node_modules/tsx/dist/loader.mjs",
+           "./src/index.ts"
+         ],
+         "env": {
+           "WA_ALLOW_FROM": "",
+           "WA_VERBOSE": "1"
+         }
+       }
+     }
+   }
+
+   Tell me: "I'm setting up the configuration file. This tells Claude Code
+   how to start the WhatsApp channel."
+
+5. Now let's set up security.
 
    Explain to me in plain English:
    - "There's a security setting that controls who can message Claude
@@ -132,10 +157,11 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
    - Ask me: "Do you want to restrict who can message Claude through
      WhatsApp? If yes, tell me the phone number(s) with country code
      (like +1 for US, +44 for UK, +63 for Philippines)."
-   - If I give you numbers, put them in WA_ALLOW_FROM separated by commas.
+   - If I give you numbers, update WA_ALLOW_FROM in .mcp.json with
+     the numbers separated by commas.
    - If I say no or skip, leave it empty.
 
-5. Now tell me we are ready to connect WhatsApp. Explain in plain English:
+6. Now tell me we are ready to connect WhatsApp. Explain in plain English:
 
    "Everything is installed! Now we need to link your WhatsApp to Claude.
    Here's what will happen:
@@ -165,7 +191,7 @@ Use the correct commands for my operating system (detect whether I am on Mac or 
    If the QR code page does NOT open automatically, tell me to open
    my browser and go to: http://127.0.0.1:8787
 
-6. After I confirm WhatsApp is connected, tell me:
+7. After I confirm WhatsApp is connected, tell me:
 
    "You're all set! Here's what you need to know:
 
