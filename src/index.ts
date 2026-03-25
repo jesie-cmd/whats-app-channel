@@ -161,12 +161,8 @@ const PermissionRequestSchema = z.object({
 mcp.setNotificationHandler(PermissionRequestSchema, async ({ params }) => {
   if (!waMonitor || !permissionReplyTarget) return;
 
-  const prompt = [
-    `🔧 *Claude wants to run ${params.tool_name}:*`,
-    params.description,
-    "",
-    `Reply *yes ${params.request_id}* or *no ${params.request_id}*`,
-  ].join("\n");
+  pendingPermissionId = params.request_id;
+  const prompt = `Can I go ahead with this? Reply *yes ${params.request_id}* or *no ${params.request_id}*`;
 
   try {
     await waMonitor.sendMessage(permissionReplyTarget, prompt);
@@ -178,10 +174,12 @@ mcp.setNotificationHandler(PermissionRequestSchema, async ({ params }) => {
 // Track which chat to send permission prompts to (most recent DM sender)
 let permissionReplyTarget: string | null = null;
 
+// Track the most recent pending permission request ID
+let pendingPermissionId: string | null = null;
+
 // ── Permission verdict regex ────────────────────────────────────────
-// Matches: "y abcde", "yes abcde", "n abcde", "no abcde"
-// [a-km-z] = Claude Code's ID alphabet (lowercase, no 'l')
-const PERMISSION_REPLY_RE = /^\s*(y|yes|n|no)\s+([a-km-z]{5})\s*$/i;
+// Matches: "y", "yes", "n", "no" (with optional request ID)
+const PERMISSION_REPLY_RE = /^\s*(y|yes|n|no)\s*([a-km-z]{5})?\s*$/i;
 
 // ── Inbound message handler ─────────────────────────────────────────
 async function handleInboundMessage(msg: InboundMessage): Promise<void> {
@@ -193,14 +191,18 @@ async function handleInboundMessage(msg: InboundMessage): Promise<void> {
   // Check if this is a permission verdict
   const verdictMatch = PERMISSION_REPLY_RE.exec(msg.body);
   if (verdictMatch) {
-    await mcp.notification({
-      method: "notifications/claude/channel/permission" as any,
-      params: {
-        request_id: verdictMatch[2].toLowerCase(),
-        behavior: verdictMatch[1].toLowerCase().startsWith("y") ? "allow" : "deny",
-      },
-    });
-    return; // Don't forward verdict as chat
+    const requestId = verdictMatch[2]?.toLowerCase() ?? pendingPermissionId;
+    if (requestId) {
+      pendingPermissionId = null;
+      await mcp.notification({
+        method: "notifications/claude/channel/permission" as any,
+        params: {
+          request_id: requestId,
+          behavior: verdictMatch[1].toLowerCase().startsWith("y") ? "allow" : "deny",
+        },
+      });
+      return; // Don't forward verdict as chat
+    }
   }
 
   // Build meta attributes for the <channel> tag
