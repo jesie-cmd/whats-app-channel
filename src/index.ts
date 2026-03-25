@@ -162,7 +162,7 @@ mcp.setNotificationHandler(PermissionRequestSchema, async ({ params }) => {
   if (!waMonitor || !permissionReplyTarget) return;
 
   pendingPermissionId = params.request_id;
-  const prompt = `Can I go ahead with this? Reply *yes ${params.request_id}* or *no ${params.request_id}*`;
+  const prompt = `Allow *${params.tool_name}*? Reply *yes ${params.request_id}* or *no ${params.request_id}*`;
 
   try {
     await waMonitor.sendMessage(permissionReplyTarget, prompt);
