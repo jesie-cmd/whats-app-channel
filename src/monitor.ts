@@ -200,6 +200,10 @@ export async function monitorWhatsApp(options: MonitorOptions) {
   const selfJid = sock.user?.id;
   const selfPhone = jidToPhone(selfJid);
 
+  // Track message IDs sent by the bot to avoid echo loops in self-chat
+  const botSentIds = new Set<string>();
+  const BOT_SENT_MAX = 500;
+
   // Group metadata cache
   const groupCache = new Map<string, { subject?: string; expires: number }>();
   const GROUP_CACHE_TTL = 5 * 60 * 1000;
@@ -254,8 +258,19 @@ export async function monitorWhatsApp(options: MonitorOptions) {
 
       debugLog(`[msg] jid=${remoteJid} sender=${senderPhone} fromMe=${fromMe} pushName=${msg.pushName} group=${isGroup}`);
 
-      // Skip own messages
-      if (fromMe) { debugLog("[skip] fromMe"); continue; }
+      // Skip bot-sent messages (replies we sent), allow user-typed self-messages
+      if (fromMe) {
+        if (msgId && botSentIds.has(msgId)) {
+          botSentIds.delete(msgId);
+          debugLog("[skip] bot-sent message");
+          continue;
+        }
+        if (isGroup) {
+          debugLog("[skip] fromMe in group");
+          continue;
+        }
+        debugLog("[allow] fromMe but not bot-sent — treating as user self-message");
+      }
 
       // Access control
       if (!isAllowed(senderPhone, allowFrom, remoteJid)) {
@@ -339,7 +354,13 @@ export async function monitorWhatsApp(options: MonitorOptions) {
       const jid = to.includes("@") ? to : `${to.replace(/^\+/, "")}@s.whatsapp.net`;
       await sock.sendPresenceUpdate("composing", jid);
       const result = await sock.sendMessage(jid, { text });
-      return { messageId: result?.key?.id ?? "unknown" };
+      const sentId = result?.key?.id;
+      if (sentId) {
+        // Track bot-sent IDs to avoid echo in self-chat
+        if (botSentIds.size > BOT_SENT_MAX) botSentIds.clear();
+        botSentIds.add(sentId);
+      }
+      return { messageId: sentId ?? "unknown" };
     },
     sendReaction: async (chatJid: string, messageId: string, emoji: string) => {
       await sock.sendMessage(chatJid, {
